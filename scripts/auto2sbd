@@ -1,0 +1,18 @@
+#!/usr/local/bin/sbcl --script
+
+(require :asdf)
+(let ((*standard-output* (make-broadcast-stream))
+      (*standard-error* (make-broadcast-stream)))
+  (asdf:load-system :span-based-ccg-derivation))
+
+(defpackage :span-based-ccg-derivation.scripts
+  (:use :cl
+	:span-based-ccg-derivation.derivation
+	:span-based-ccg-derivation.converter
+	:span-based-ccg-derivation.ptb))
+
+(in-package :span-based-ccg-derivation.scripts)
+
+(do-stream-derivation (derivation *standard-input*)
+  (write-tree (derivation->sb-derivation derivation) *standard-output*)
+  (terpri *standard-output*))
